@@ -1,51 +1,47 @@
-# 🎯 Mindguess — Number Guessing Game
+# NEXUS — Holographic Number Guessing Game
 
-A beginner-friendly number guessing project powered by **binary search**. The computer can guess the number you're thinking of through the original Python terminal game, or you can play with the new polished, responsive browser interface.
+A binary-search guessing game with a premium sci-fi HUD and animated holographic core. The computer guesses a number you are thinking of; you tell it whether the guess is too high, too low, or correct.
 
-## ✨ Browser UI
+## ✨ Browser experience
 
-The web version includes:
-- 🌙 Classy dark interface with lime and violet accents
-- 📱 Responsive layout for desktop, tablet, and mobile
-- 🎮 Interactive **Too high**, **Too low**, and **That's it!** controls
-- 🎚️ Custom ranges and one-click presets (1–10, 1–100, 1–1,000, and −50–50)
-- 📊 Search progress, numbers remaining, guess count, and guess history
-- ⌨️ Keyboard shortcuts: **←** = too high, **→** = too low, **Enter** = correct
-- ♿ Focus-visible controls, accessible live feedback, and reduced-motion support
-- 🚫 Input validation and clear recovery when answers conflict
+- **Premium sci-fi HUD:** layered translucent panels, technical telemetry, restrained cyan/blue lighting, and a dark atmospheric grid.
+- **CSS 3D hologram:** floating glass number frame, illuminated core, rotating orbital rings, scan lines, and a projected floor.
+- **Context-aware effects:** amber pulses for “too high,” cyan-blue pulses for “too low,” a mint-green particle celebration for a correct guess, and a red glitch warning if answers conflict.
+- **Live telemetry:** possible numbers remaining, search reduction, current range, maximum expected guesses, and signal history.
+- **Range controls:** custom integer ranges plus presets for 1–10, 1–100, 1–1,000, and −50–50.
+- **Keyboard controls:** Left Arrow = too high, Right Arrow = too low, Enter = correct.
+- **Responsive layout:** desktop three-column HUD, tablet adaptation, and mobile stacked layout.
+- **Accessibility and resilience:** semantic controls, live status messages, visible keyboard focus, input validation, and reduced-motion support.
 
-The browser game is implemented in plain HTML, CSS, and JavaScript. No frameworks, package installation, server, or external libraries are required.
+The browser version uses plain HTML, CSS, and JavaScript with a canvas particle effect. It does not require Three.js, a build step, package installation, a server, or external assets. The holographic depth is created with CSS 3D transforms and layered lighting, keeping it lightweight and compatible with GitHub Pages.
 
-## 🚀 Run the browser game
+## 🚀 Run without cloning
 
-1. Download or clone this repository.
-2. Open `index.html` in any modern browser.
-3. Think of a number in the selected range and respond to the computer's guesses.
+Open the deployed GitHub Pages site in your browser (after Pages is enabled for the repository):
 
-You can also use VS Code's Live Server extension if you prefer a local development server.
+https://muralib0214.github.io/number_guess-binary_search-/
+
+Or open `index.html` directly in any modern browser. No build command is needed.
 
 ## 🐍 Run the original Python game
 
-Requires Python 3.x and no external libraries.
+Requires Python 3.x.
 
 ```bash
-git clone https://github.com/muralib0214/number_guess-binary_search-.git
-cd number_guess-binary_search-
 python number_guess.py
 ```
 
-The terminal version asks you to choose a start and end range, then answers whether each computer guess matches your number and whether your number is higher or lower.
+The original terminal game is preserved alongside the browser UI.
 
 ## 🧠 How binary search works
 
-1. Find the middle of the current range.
-2. Ask whether the target number is the guess, higher, or lower.
-3. Discard the half that cannot contain the target.
-4. Repeat until the number is found.
+1. Inspect the midpoint of the current candidate range.
+2. If the guess is too high, discard the upper part; if too low, discard the lower part.
+3. Repeat until the target is found.
 
-Each answer cuts the search range roughly in half, so the algorithm runs in **O(log n)** time.
+Each answer reduces the candidate set by about half. Time complexity is **O(log n)**.
 
-| Range size | Maximum guesses (approximately) |
+| Candidate range size | Maximum guesses (approx.) |
 | ---: | ---: |
 | 100 | 7 |
 | 1,000 | 10 |
@@ -55,25 +51,29 @@ Each answer cuts the search range roughly in half, so the algorithm runs in **O(
 
 ```text
 number_guess-binary_search-/
-├── index.html       # Interactive browser UI (HTML, CSS, JavaScript)
+├── index.html       # Holographic browser UI and game logic
 ├── number_guess.py  # Original Python terminal game
 └── README.md        # Project documentation
 ```
 
-## 🛠️ Tech stack
+## 🛠️ Stack
 
-- **Python 3** — original command-line implementation
-- **HTML5, CSS3, JavaScript** — browser UI
-- **Binary search** — core search strategy
+- HTML5
+- CSS3 (3D transforms, animation, responsive layout)
+- Vanilla JavaScript
+- Canvas 2D particles
+- Python 3 (original terminal version)
+
+## ♿ Motion preferences
+
+Animations respect the operating system's `prefers-reduced-motion` preference. The core game logic and buttons remain usable without motion effects.
 
 ## 🔮 Possible next steps
 
-- Add sound and optional visual effects
-- Save personal bests and play statistics locally
-- Add more game modes and accessibility preferences
+- Optional sound design and user-controlled intensity
+- Persisted personal best and game statistics
+- Additional visual themes and challenge modes
 
 ## 👨‍💻 Author
 
-Murali — learning data structures, algorithms, and Python.
-
-Contributions and suggestions are welcome.
+Murali
