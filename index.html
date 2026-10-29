@@ -524,8 +524,9 @@
       els.higher.addEventListener('click', () => answer('too-low'));
       els.correct.addEventListener('click', () => answer('correct'));
 
-      root.addEventListener('keydown', (event) => {
-        if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select,button')) return;
+      document.addEventListener('keydown', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select')) return;
+        if (event.key === 'Enter' && event.target.closest('button')) return;
         if (event.key === 'ArrowLeft') { event.preventDefault(); answer('too-high'); }
         else if (event.key === 'ArrowRight') { event.preventDefault(); answer('too-low'); }
         else if (event.key === 'Enter' && !finished) { event.preventDefault(); answer('correct'); }
