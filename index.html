@@ -3,260 +3,538 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#10121b">
-  <meta name="description" content="A polished, interactive binary-search number guessing game. Think of a number and let the computer find it.">
-  <title>Mindguess — Number Guessing Game</title>
+  <meta name="theme-color" content="#070b14">
+  <meta name="description" content="A cinematic holographic number guessing game powered by binary search.">
+  <title>NEXUS — Holographic Guessing Engine</title>
   <style>
-    :root{color-scheme:dark;--bg:#10121b;--panel:#191c28;--panel2:#202434;--line:rgba(255,255,255,.09);--text:#f4f2ee;--muted:#a3a8b8;--accent:#c6f277;--accent-ink:#19210d;--violet:#a69bff;--danger:#ff8e9a;--shadow:0 24px 80px rgba(0,0,0,.32)}
+    :root{
+      color-scheme:dark;--bg:#070b14;--panel:rgba(14,23,37,.76);--panel-strong:rgba(14,24,40,.94);
+      --line:rgba(145,205,236,.15);--line-strong:rgba(145,225,255,.34);--text:#ecf8ff;
+      --muted:#8197aa;--cyan:#85e7ff;--blue:#83baff;--teal:#7af3d0;--amber:#ffd28a;
+      --red:#ff809b;--good:#a5ffcc;--shadow:0 28px 72px rgba(0,0,0,.32)
+    }
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 18% 0%,rgba(166,155,255,.13),transparent 38%),radial-gradient(ellipse at 90% 30%,rgba(198,242,119,.08),transparent 30%),var(--bg);color:var(--text);font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;flex-direction:column}
+    html{min-width:320px}
+    body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(ellipse at 49% -15%,rgba(38,111,161,.24),transparent 52%),radial-gradient(ellipse at 0% 55%,rgba(41,74,120,.12),transparent 36%),var(--bg);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.28;background-image:linear-gradient(rgba(139,194,226,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(139,194,226,.055) 1px,transparent 1px);background-size:52px 52px;mask-image:linear-gradient(to bottom,black,transparent 90%)}
+    body::after{content:"";position:fixed;width:38rem;height:38rem;right:-15rem;top:22%;border-radius:50%;background:rgba(33,111,159,.08);filter:blur(80px);pointer-events:none;z-index:-1}
     button,input{font:inherit}
     button{cursor:pointer}
-    button:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:3px}
-    .wrap{width:min(1120px,calc(100% - 36px));margin:0 auto}
-    header{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
-    .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.04em;font-size:1.15rem}
-    .brand-mark{display:grid;place-items:center;width:37px;height:37px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-size:1.2rem}
-    .top-note{font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:7px 12px}
-    main{flex:1;padding:52px 0 44px}
-    .intro{text-align:center;max-width:690px;margin:0 auto 32px}
-    .eyebrow{color:var(--accent);font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.19em}
-    h1{font-size:clamp(2.3rem,5.6vw,4.6rem);letter-spacing:-.075em;line-height:1.02;margin:14px 0 16px}
-    h1 span{color:var(--accent)}
-    .intro p{color:var(--muted);margin:0 auto;max-width:520px;font-size:1.02rem}
-    .layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.8fr);gap:18px;align-items:stretch}
-    .card{background:linear-gradient(145deg,rgba(255,255,255,.035),transparent 55%),var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
-    .game{padding:clamp(22px,4vw,38px);min-height:440px;display:flex;flex-direction:column}
-    .card-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
-    .label{font-size:.75rem;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:750}
-    .status{display:inline-flex;align-items:center;gap:7px;font-size:.76rem;color:var(--accent);background:rgba(198,242,119,.08);border:1px solid rgba(198,242,119,.18);border-radius:999px;padding:6px 10px}
-    .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(198,242,119,.7)}
-    .range-line{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:24px 0 10px}
-    .range-chip{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 11px;color:var(--text);font-weight:700}
-    .range-chip small{color:var(--muted);font-weight:500;margin-right:6px}
-    .guess-label{text-align:center;color:var(--muted);font-size:.88rem;margin-top:16px}
-    .guess{font-size:clamp(5rem,14vw,8.2rem);letter-spacing:-.09em;line-height:1.05;font-weight:850;text-align:center;margin:5px 0 10px;color:var(--text);font-variant-numeric:tabular-nums}
-    .message{text-align:center;color:var(--muted);min-height:26px;margin:0 auto 25px;max-width:450px}
-    .actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:auto}
-    .btn{border:1px solid var(--line);border-radius:13px;padding:14px 10px;font-weight:800;transition:transform .18s ease,background .18s ease,border-color .18s ease}
-    .btn:hover{transform:translateY(-2px)}
-    .btn:active{transform:translateY(0)}
-    .btn-secondary{background:var(--panel2);color:var(--text)}
-    .btn-secondary:hover{border-color:rgba(255,255,255,.24)}
-    .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
-    .btn-primary:hover{background:#d5fb91}
-    .btn:disabled{opacity:.38;cursor:not-allowed;transform:none}
-    .arrow{font-size:1.05rem;margin-right:4px}
-    .bottom-row{display:flex;justify-content:space-between;gap:12px;margin-top:18px;color:var(--muted);font-size:.78rem}
-    .bottom-row strong{color:var(--text)}
-    .side{display:flex;flex-direction:column;gap:18px}
-    .side-card{padding:23px}
-    .side h2{font-size:1rem;letter-spacing:-.025em;margin:0 0 17px}
-    .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .stat{padding:15px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:15px}
-    .stat strong{display:block;font-size:1.75rem;letter-spacing:-.06em;font-variant-numeric:tabular-nums}
-    .stat span{font-size:.75rem;color:var(--muted)}
-    .progress-track{height:7px;border-radius:99px;background:#2a2e3d;overflow:hidden;margin:13px 0 8px}
-    .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--accent));border-radius:99px;transition:width .3s ease}
-    .small-muted{font-size:.78rem;color:var(--muted);margin:0}
-    .history{display:flex;flex-wrap:wrap;gap:7px;min-height:35px}
-    .history-pill{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:6px 10px;font-size:.8rem;font-weight:750}
-    .history-empty{color:var(--muted);font-size:.82rem}
-    .setup{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-    .field label{display:block;color:var(--muted);font-size:.75rem;margin-bottom:6px}
-    .field input{width:100%;background:#11141f;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:11px 12px;min-width:0}
-    .wide{grid-column:1/-1}
-    .presets{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-    .preset{font-size:.75rem;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--muted)}
-    .preset:hover{color:var(--text);border-color:var(--violet)}
-    .btn-full{width:100%;margin-top:13px}
-    .notice{font-size:.8rem;color:var(--danger);min-height:18px;margin:8px 0 0}
-    footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-size:.76rem}
-    .footer-inner{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:2px 5px;color:var(--text)}
-    .celebrate{animation:pop .38s ease}
-    @keyframes pop{0%{transform:scale(.94)}60%{transform:scale(1.035)}100%{transform:scale(1)}}
-    @media(max-width:760px){main{padding-top:36px}.layout{grid-template-columns:1fr}.game{min-height:410px}.side{display:grid;grid-template-columns:1fr 1fr}.side-card:last-child{grid-column:1/-1}}
-    @media(max-width:480px){.wrap{width:min(100% - 24px,1120px)}header{height:70px}.top-note{font-size:.68rem}.intro{margin-bottom:25px}.intro p{font-size:.93rem}.side{display:flex}.game{padding:22px 17px;border-radius:19px}.actions{gap:7px}.btn{font-size:.84rem;padding:13px 5px}.bottom-row{font-size:.72rem}.guess{font-size:6rem}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+    button:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}
+    .page{width:min(1220px,calc(100% - 40px));margin:0 auto}
+    .topbar{height:78px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid rgba(145,205,236,.1)}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .brand-symbol{width:36px;height:36px;display:grid;place-items:center;border:1px solid rgba(133,231,255,.48);border-radius:11px;color:var(--cyan);background:linear-gradient(145deg,rgba(133,231,255,.16),rgba(133,231,255,.02));box-shadow:inset 0 0 16px rgba(133,231,255,.08),0 0 22px rgba(133,231,255,.06);font-size:1.15rem}
+    .brand-name{font-size:.91rem;font-weight:850;letter-spacing:.16em}
+    .brand-sub{display:block;color:var(--muted);font-size:.62rem;letter-spacing:.18em;margin-top:1px}
+    .topbar-right{display:flex;align-items:center;gap:17px}
+    .system-label{font: .68rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:#91a9bb;letter-spacing:.08em}
+    .live-pill{display:flex;align-items:center;gap:8px;border:1px solid rgba(122,243,208,.19);color:#9bf3d9;background:rgba(122,243,208,.055);padding:7px 11px;border-radius:999px;font-size:.68rem;font-weight:750;letter-spacing:.08em}
+    .live-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;box-shadow:0 0 10px rgba(122,243,208,.8);animation:blink 2.4s ease-in-out infinite}
+    .hero{padding:44px 0 25px;text-align:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--cyan);font:750 .68rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.22em;text-transform:uppercase}
+    .eyebrow::before,.eyebrow::after{content:"";width:25px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan));opacity:.55}
+    .eyebrow::after{transform:rotate(180deg)}
+    h1{font-size:clamp(2.1rem,4.9vw,4.2rem);line-height:1.05;letter-spacing:-.065em;margin:13px 0 12px;font-weight:720}
+    h1 span{font-weight:430;color:#9eb6ca}
+    .hero-copy{margin:0 auto;color:var(--muted);font-size:.94rem;max-width:590px}
+    .hero-meta{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:17px}
+    .meta-chip{color:#92aabc;border:1px solid rgba(145,205,236,.1);background:rgba(145,205,236,.035);padding:5px 9px;border-radius:6px;font:.62rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.05em}
+    .meta-chip strong{color:#d1edf8;font-weight:700}
+    .layout{display:grid;grid-template-columns:245px minmax(0,1fr) 245px;grid-template-areas:"range stage stats";gap:16px;align-items:stretch;padding-bottom:44px}
+    .panel{background:linear-gradient(145deg,rgba(255,255,255,.025),transparent 47%),var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);min-width:0}
+    .range-panel{grid-area:range;padding:20px 17px}
+    .stats-panel{grid-area:stats;padding:20px 17px}
+    .panel-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}
+    .panel-title{margin:0;color:#d6ebf6;font:750 .68rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase}
+    .panel-index{font: .63rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:#526e83}
+    .small-label{display:block;color:var(--muted);font-size:.7rem;margin-bottom:7px}
+    .range-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .field{min-width:0}
+    .field input{width:100%;min-width:0;border-radius:8px;border:1px solid rgba(145,205,236,.17);background:rgba(3,9,18,.58);color:var(--text);padding:10px 9px;font-size:.88rem;font-variant-numeric:tabular-nums;transition:border-color .2s,box-shadow .2s}
+    .field input:focus{border-color:rgba(133,231,255,.58);box-shadow:0 0 0 3px rgba(133,231,255,.06);outline:none}
+    .full-btn{width:100%;min-height:42px;margin-top:11px;border-radius:8px;background:linear-gradient(135deg,rgba(133,231,255,.17),rgba(131,186,255,.08));border:1px solid rgba(133,231,255,.32);color:#d9f7ff;font-size:.78rem;font-weight:800;letter-spacing:.045em;transition:background .2s,border-color .2s,transform .2s}
+    .full-btn:hover{background:rgba(133,231,255,.18);border-color:rgba(133,231,255,.65)}
+    .full-btn:active,.action-btn:active{transform:translateY(1px)}
+    .separator{height:1px;background:linear-gradient(90deg,rgba(145,205,236,.18),transparent);margin:19px 0}
+    .presets{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .preset{min-height:35px;border-radius:7px;background:rgba(145,205,236,.035);border:1px solid rgba(145,205,236,.12);color:#9bb2c3;font-size:.72rem;transition:all .18s}
+    .preset:hover{color:var(--cyan);border-color:rgba(133,231,255,.38);background:rgba(133,231,255,.06)}
+    .notice{color:var(--red);font-size:.73rem;line-height:1.45;min-height:18px;margin:9px 0 0}
+    .field-note{font-size:.68rem;line-height:1.5;color:#647e92;margin:11px 0 0}
+    .tiny-heading{color:#829db1;font:700 .64rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .metric-list{display:grid;gap:12px}
+    .metric{border:1px solid rgba(145,205,236,.09);border-radius:9px;background:rgba(2,8,17,.25);padding:12px 11px}
+    .metric-top{display:flex;justify-content:space-between;gap:8px;align-items:center;color:var(--muted);font-size:.68rem}
+    .metric-value{font-size:1.7rem;line-height:1.15;letter-spacing:-.055em;font-weight:650;color:#e7f7ff;margin-top:5px;font-variant-numeric:tabular-nums}
+    .metric-value small{font-size:.78rem;color:#82cce6;font-weight:550;letter-spacing:0}
+    .metric-track{height:3px;overflow:hidden;border-radius:99px;background:rgba(145,205,236,.1);margin-top:10px}
+    .metric-fill{height:100%;width:0;background:linear-gradient(90deg,#6bafff,var(--cyan));box-shadow:0 0 11px rgba(133,231,255,.7);transition:width .45s cubic-bezier(.2,.75,.2,1)}
+    .range-visual{display:grid;gap:8px;margin-top:16px}
+    .range-visual-row{display:flex;justify-content:space-between;color:#7892a7;font: .65rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace}
+    .range-bar{height:5px;border-radius:99px;background:rgba(145,205,236,.1);overflow:hidden}
+    .range-bar span{display:block;width:100%;height:100%;transform-origin:left center;background:linear-gradient(90deg,#648cff,#83e9ff);transition:transform .4s ease}
+    .history-heading{display:flex;align-items:center;justify-content:space-between;margin:21px 0 11px}
+    .history-count{color:#6f8a9f;font: .62rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}
+    .history-list{display:flex;flex-wrap:wrap;gap:6px;min-height:38px;align-content:flex-start}
+    .history-empty{color:#607a8e;font-size:.72rem;line-height:1.5}
+    .history-pill{display:inline-flex;gap:7px;align-items:center;max-width:100%;border:1px solid rgba(145,205,236,.12);background:rgba(145,205,236,.045);border-radius:6px;padding:6px 8px;color:#b0c7d8;font:.66rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}
+    .history-pill i{width:5px;height:5px;border-radius:50%;background:#8bbde1;display:inline-block;flex:0 0 auto}
+    .history-pill.found{border-color:rgba(165,255,204,.23);color:#bcffda}.history-pill.found i{background:var(--good)}
+    .history-pill.high i{background:var(--amber)}.history-pill.low i{background:var(--cyan)}
+    .keyboard-hint{margin-top:17px;padding-top:15px;border-top:1px solid rgba(145,205,236,.08);color:#6b8396;font-size:.65rem;line-height:1.8}
+    kbd{font: .62rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#b8d3e3;background:rgba(145,205,236,.07);border:1px solid rgba(145,205,236,.13);border-radius:4px;padding:3px 5px}
+    .game-stage{grid-area:stage;position:relative;min-width:0;min-height:585px;overflow:hidden;border:1px solid rgba(145,205,236,.16);border-radius:18px;background:radial-gradient(ellipse at 50% 43%,rgba(31,101,137,.19),transparent 54%),linear-gradient(180deg,rgba(10,20,33,.95),rgba(7,13,24,.97));box-shadow:0 24px 85px rgba(0,0,0,.3),inset 0 0 70px rgba(46,122,169,.035)}
+    .game-stage::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.28;background-image:linear-gradient(rgba(126,204,238,.065) 1px,transparent 1px),linear-gradient(90deg,rgba(126,204,238,.065) 1px,transparent 1px);background-size:36px 36px;mask-image:radial-gradient(ellipse at center,black,transparent 79%)}
+    .game-stage::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 10%,rgba(119,222,255,.022) 49%,transparent 75%);transform:translateX(-100%);animation:stageSweep 9s linear infinite}
+    .stage-topline,.stage-bottomline{position:absolute;left:18px;right:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:5;pointer-events:none;font:.61rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em;color:#62869c}
+    .stage-topline{top:17px}.stage-bottomline{bottom:16px}
+    .stage-id{display:flex;align-items:center;gap:7px}.stage-id::before{content:"";width:5px;height:5px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px rgba(133,231,255,.7)}
+    .stage-actions{position:absolute;top:12px;right:13px;z-index:8;pointer-events:auto}
+    .ghost-btn{background:rgba(145,205,236,.045);border:1px solid rgba(145,205,236,.15);border-radius:6px;color:#8ea9bd;padding:7px 9px;font-size:.67rem;transition:all .18s}
+    .ghost-btn:hover{color:var(--cyan);border-color:rgba(133,231,255,.4)}
+    .scene{position:absolute;inset:34px 8px 37px;display:grid;place-items:center;perspective:950px;isolation:isolate}
+    .scene-glow{position:absolute;width:min(84%,370px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(57,166,208,.18),rgba(28,92,142,.08) 35%,transparent 70%);filter:blur(12px);animation:glowBreath 5s ease-in-out infinite}
+    .holo-object{position:relative;width:min(76%,320px);aspect-ratio:1;transform-style:preserve-3d;animation:floatObject 6s ease-in-out infinite;will-change:transform}
+    .holo-orb{position:absolute;inset:22%;border-radius:50%;transform-style:preserve-3d;transform:translateZ(8px) rotateX(10deg) rotateY(-16deg);background:radial-gradient(circle at 31% 24%,rgba(207,250,255,.88) 0%,rgba(95,203,240,.53) 5%,rgba(42,131,187,.29) 19%,rgba(20,58,91,.56) 48%,rgba(9,23,43,.97) 73%);box-shadow:inset -18px -18px 40px rgba(0,0,0,.6),inset 7px 7px 23px rgba(137,232,255,.24),0 0 38px rgba(70,192,235,.25),0 0 110px rgba(38,135,199,.12)}
+    .holo-orb::before{content:"";position:absolute;inset:-1px;border-radius:50%;border:1px solid rgba(162,235,255,.56);box-shadow:inset 0 0 18px rgba(124,220,255,.13),0 0 18px rgba(124,220,255,.17)}
+    .holo-orb::after{content:"";position:absolute;inset:7%;border-radius:50%;background:repeating-linear-gradient(0deg,transparent 0px,transparent 5px,rgba(148,236,255,.09) 6px,transparent 7px);mask-image:radial-gradient(circle,black 20%,transparent 72%);animation:orbScan 4.5s linear infinite}
+    .orb-meridian{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(129,222,255,.34);transform:rotateY(56deg) scaleX(.55);box-shadow:0 0 13px rgba(95,203,240,.1)}
+    .orb-meridian.two{transform:rotateY(-56deg) scaleX(.55)}
+    .orb-latitude{position:absolute;inset:15% -1%;border:1px solid rgba(129,222,255,.23);border-radius:50%;transform:rotateX(71deg)}
+    .orb-latitude.two{inset:34% -1%;transform:rotateX(71deg)}
+    .orbit{position:absolute;inset:4%;border-radius:50%;border:1px solid rgba(126,224,255,.36);transform-style:preserve-3d}
+    .orbit::before{content:"";position:absolute;width:7px;height:7px;border-radius:50%;top:16%;left:15%;background:#bdf6ff;box-shadow:0 0 12px 3px rgba(133,231,255,.72)}
+    .orbit-one{transform:rotateX(73deg) rotateZ(-18deg);animation:orbitSpin 13s linear infinite}
+    .orbit-two{inset:0%;border-color:rgba(129,180,255,.28);transform:rotateY(68deg) rotateX(17deg);animation:orbitSpin 17s linear infinite reverse}
+    .orbit-two::before{top:57%;left:1%;width:5px;height:5px;background:#9bbcff;box-shadow:0 0 10px 3px rgba(131,186,255,.7)}
+    .orbit-three{inset:10% -5%;border-color:rgba(122,243,208,.22);transform:rotateX(66deg) rotateZ(63deg);animation:orbitSpin 21s linear infinite}
+    .orbit-three::before{width:4px;height:4px;left:70%;top:2%;background:var(--teal);box-shadow:0 0 9px 2px rgba(122,243,208,.5)}
+    .holo-number{position:absolute;inset:0;display:grid;place-items:center;transform:translateZ(64px);text-align:center;pointer-events:none}
+    .number-frame{position:relative;width:47%;min-width:110px;padding:12px 8px 10px;border:1px solid rgba(170,237,255,.36);background:linear-gradient(145deg,rgba(110,215,255,.18),rgba(17,47,72,.5));box-shadow:inset 0 0 23px rgba(124,220,255,.1),0 0 27px rgba(72,181,226,.09);backdrop-filter:blur(6px);transform:translateZ(30px);clip-path:polygon(9% 0,91% 0,100% 20%,100% 80%,91% 100%,9% 100%,0 80%,0 20%)}
+    .number-frame::before,.number-frame::after{content:"";position:absolute;width:11px;height:11px;border-color:var(--cyan);border-style:solid;opacity:.8}
+    .number-frame::before{top:0;left:0;border-width:1px 0 0 1px}.number-frame::after{bottom:0;right:0;border-width:0 1px 1px 0}
+    .number-label{color:#8eb7cd;font: .55rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em}
+    .number-value{font-size:clamp(2.9rem,6vw,4.4rem);line-height:1.06;letter-spacing:-.08em;font-weight:760;font-variant-numeric:tabular-nums;color:#f0fbff;text-shadow:0 0 13px rgba(133,231,255,.7),0 0 40px rgba(71,195,245,.22);transition:opacity .16s,transform .16s;overflow-wrap:anywhere}
+    .number-caption{margin-top:4px;color:#6b9db7;font: .54rem/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em}
+    .floor-disc{position:absolute;bottom:3%;width:min(82%,360px);height:20%;border-radius:50%;transform:rotateX(73deg) translateZ(-30px);border:1px solid rgba(116,222,255,.2);background:radial-gradient(ellipse,rgba(68,173,210,.16),rgba(14,50,79,.08) 40%,transparent 72%);box-shadow:0 0 34px rgba(60,178,220,.1);overflow:hidden}
+    .floor-disc::before{content:"";position:absolute;inset:13%;border-radius:50%;border:1px dashed rgba(138,222,250,.25);animation:orbitSpin 24s linear infinite}
+    .floor-disc::after{content:"";position:absolute;inset:30%;border-radius:50%;border:1px solid rgba(138,222,250,.22)}
+    .scan-beam{position:absolute;left:12%;right:12%;height:1px;top:30%;background:linear-gradient(90deg,transparent,rgba(145,242,255,.5),transparent);box-shadow:0 0 15px rgba(133,231,255,.25);opacity:.55;animation:beamScan 4.8s ease-in-out infinite;z-index:4;pointer-events:none}
+    .scan-line{position:absolute;left:6%;right:6%;height:1px;top:50%;background:linear-gradient(90deg,transparent,rgba(133,231,255,.16),transparent);z-index:1}
+    .core-caption{position:absolute;left:10px;right:10px;bottom:10%;text-align:center;color:#7b9cb1;font: .61rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;z-index:4}
+    .core-caption strong{color:#b4dceb;font-weight:650}
+    .action-deck{position:absolute;left:15px;right:15px;bottom:49px;display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:8px;z-index:9}
+    .action-btn{min-width:0;min-height:47px;padding:9px 7px;border-radius:8px;border:1px solid rgba(145,205,236,.18);background:rgba(145,205,236,.055);color:#b2ccdc;font-weight:750;font-size:.74rem;letter-spacing:.015em;transition:background .22s,border-color .22s,color .22s,box-shadow .22s,transform .18s}
+    .action-btn .symbol{display:inline-block;font-size:.86rem;margin-right:5px;color:#91bcd5}
+    .action-btn:hover{background:rgba(145,205,236,.105);border-color:rgba(145,205,236,.43);color:#e3f7ff}
+    .action-btn.primary{color:#e4fbff;border-color:rgba(133,231,255,.48);background:linear-gradient(135deg,rgba(133,231,255,.18),rgba(80,159,205,.1));box-shadow:inset 0 0 17px rgba(133,231,255,.055),0 0 17px rgba(133,231,255,.04)}
+    .action-btn.primary:hover{background:linear-gradient(135deg,rgba(133,231,255,.26),rgba(80,159,205,.16));box-shadow:inset 0 0 20px rgba(133,231,255,.08),0 0 24px rgba(133,231,255,.09)}
+    .action-btn:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none}
+    .status-message{position:absolute;left:20px;right:20px;bottom:103px;text-align:center;color:#8eaabd;font-size:.73rem;min-height:22px;z-index:7}
+    .status-message strong{font-weight:750;color:#c4eafa}
+    .status-message.success{color:var(--good)}.status-message.success strong{color:var(--good)}
+    .status-message.error{color:var(--red)}.status-message.error strong{color:var(--red)}
+    .effects-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
+    .flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;mix-blend-mode:screen}
+    .event-high .flash{background:radial-gradient(ellipse at 50% 48%,rgba(255,210,138,.16),transparent 64%);animation:flashOut .7s ease-out}
+    .event-low .flash{background:radial-gradient(ellipse at 50% 48%,rgba(133,231,255,.18),transparent 64%);animation:flashOut .7s ease-out}
+    .event-success .flash{background:radial-gradient(ellipse at 50% 48%,rgba(165,255,204,.25),transparent 70%);animation:flashOut 1.2s ease-out}
+    .event-error .flash{background:linear-gradient(90deg,transparent,rgba(255,128,155,.2),transparent);animation:glitchFlash .5s steps(2,end)}
+    .event-high .holo-orb{box-shadow:inset -18px -18px 40px rgba(0,0,0,.6),inset 7px 7px 23px rgba(255,210,138,.18),0 0 48px rgba(255,177,91,.28),0 0 112px rgba(255,177,91,.12)}
+    .event-high .holo-orb::before{border-color:rgba(255,210,138,.6)}
+    .event-high .number-value{text-shadow:0 0 16px rgba(255,210,138,.7),0 0 40px rgba(255,177,91,.3)}
+    .event-low .holo-orb{box-shadow:inset -18px -18px 40px rgba(0,0,0,.6),inset 7px 7px 23px rgba(133,231,255,.28),0 0 48px rgba(87,221,255,.32),0 0 112px rgba(38,135,199,.17)}
+    .event-success .holo-orb{box-shadow:inset -18px -18px 40px rgba(0,0,0,.5),inset 7px 7px 30px rgba(165,255,204,.4),0 0 60px rgba(122,243,208,.55),0 0 140px rgba(122,243,208,.25)}
+    .event-success .number-value{color:#d6ffe9;text-shadow:0 0 18px rgba(165,255,204,.8),0 0 54px rgba(122,243,208,.4)}
+    .event-success .orbit{border-color:rgba(165,255,204,.52)}
+    .event-error .holo-object{animation:glitch .42s steps(2,end)}
+    .event-error .holo-orb{box-shadow:inset -18px -18px 40px rgba(0,0,0,.6),0 0 40px rgba(255,128,155,.35)}
+    .number-changing .number-value{animation:numberIn .36s cubic-bezier(.2,.8,.2,1)}
+    .notice-success{color:var(--good)!important}
+    .footer{border-top:1px solid rgba(145,205,236,.1);padding:18px 0 22px;color:#5d788d;font-size:.68rem}
+    .footer-inner{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .footer strong{font-weight:700;color:#85a4b9}
+    @keyframes blink{0%,100%{opacity:.6}50%{opacity:1}}
+    @keyframes stageSweep{0%{transform:translateX(-100%)}55%,100%{transform:translateX(100%)}}
+    @keyframes floatObject{0%,100%{transform:translateY(1px) rotateX(-2deg) rotateY(-5deg)}50%{transform:translateY(-10px) rotateX(2deg) rotateY(4deg)}}
+    @keyframes orbitSpin{from{rotate:0deg}to{rotate:360deg}}
+    @keyframes glowBreath{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:.96;transform:scale(1.06)}}
+    @keyframes orbScan{from{background-position-y:0}to{background-position-y:40px}}
+    @keyframes beamScan{0%,100%{transform:translateY(-28px);opacity:.18}50%{transform:translateY(110px);opacity:.75}}
+    @keyframes numberIn{0%{opacity:0;transform:translateY(9px) scale(.86);filter:blur(5px)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+    @keyframes flashOut{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
+    @keyframes glitchFlash{0%{opacity:.7;transform:translateX(-3px)}40%{opacity:.3;transform:translateX(4px)}100%{opacity:0;transform:none}}
+    @keyframes glitch{0%{transform:translate(0)}25%{transform:translate(-4px,1px) skewX(-1deg)}50%{transform:translate(3px,-1px)}75%{transform:translate(-2px,0)}100%{transform:none}}
+    @media(max-width:1090px){.layout{grid-template-columns:220px minmax(0,1fr);grid-template-areas:"stage stage" "range stats";}.game-stage{min-height:620px}.range-panel,.stats-panel{padding:20px}.metric-list{grid-template-columns:1fr 1fr}.metric:last-child{grid-column:1/-1}.stats-panel .history-heading{margin-top:18px}}
+    @media(max-width:640px){.page{width:calc(100% - 24px)}.topbar{height:68px}.system-label{display:none}.brand-name{font-size:.8rem}.topbar-right{gap:8px}.hero{padding:35px 0 22px}h1{font-size:clamp(2rem,8.5vw,3.2rem)}.hero-copy{font-size:.84rem;max-width:420px}.layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "range" "stats";gap:12px}.game-stage{min-height:590px}.range-panel,.stats-panel{padding:17px}.range-panel{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}.range-panel .panel-heading,.range-panel .separator,.range-panel .field-note,.range-panel .notice{grid-column:1/-1}.range-panel .separator{margin:15px 0}.range-panel .range-fields,.range-panel #rangeForm{grid-column:1/-1}.range-panel .presets{grid-column:1/-1;grid-template-columns:repeat(4,minmax(0,1fr))}.range-panel .preset{font-size:.66rem;padding:6px 2px}.field-note{margin-bottom:0}.metric-list{grid-template-columns:1fr 1fr}.metric:last-child{grid-column:auto}.stats-panel .history-heading{margin-top:20px}.footer-inner{gap:7px}.stage-topline,.stage-bottomline{left:12px;right:12px}.stage-topline{top:13px}.stage-bottomline{bottom:12px}.stage-actions{top:8px;right:8px}.stage-topline .stage-index{display:none}}
+    @media(max-width:400px){.game-stage{min-height:555px}.scene{inset:35px 0 55px}.holo-object{width:82%}.action-deck{left:9px;right:9px;bottom:42px;gap:5px}.action-btn{font-size:.67rem;padding:8px 3px}.action-btn .symbol{margin-right:2px}.status-message{bottom:94px;font-size:.68rem}.number-value{font-size:3rem}.number-frame{min-width:102px}.stage-bottomline{font-size:.54rem}.live-pill{font-size:.59rem;padding:6px 8px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
   </style>
 </head>
 <body>
-  <header class="wrap">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span> mindguess</div>
-    <div class="top-note">A little logic. A little magic.</div>
-  </header>
-  <main class="wrap">
-    <section class="intro">
-      <div class="eyebrow">The binary search challenge</div>
-      <h1>Your number.<br><span>My next move.</span></h1>
-      <p>Think of any whole number inside your range. I’ll narrow it down with a smart search — you just tell me which way to go.</p>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-symbol" aria-hidden="true">⟡</div>
+        <div><div class="brand-name">NEXUS</div><span class="brand-sub">COGNITIVE INTERFACE / 01</span></div>
+      </div>
+      <div class="topbar-right">
+        <span class="system-label">BINARY SEARCH PROTOCOL</span>
+        <span class="live-pill"><span class="live-dot"></span> SYSTEM ONLINE</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">Interactive intelligence</div>
+      <h1>Think of a number.<br><span>Watch the search unfold.</span></h1>
+      <p class="hero-copy">Keep your number secret. The engine will narrow the field with every answer until your number comes into focus.</p>
+      <div class="hero-meta">
+        <span class="meta-chip">ALGORITHM <strong>O(log n)</strong></span>
+        <span class="meta-chip">ENGINE <strong>BINARY SEARCH</strong></span>
+        <span class="meta-chip">MODE <strong>HUMAN-IN-THE-LOOP</strong></span>
+      </div>
     </section>
-    <section class="layout" aria-label="Number guessing game">
-      <article class="card game">
-        <div class="card-top">
-          <span class="label">Current guess</span>
-          <span class="status" id="status"><span class="dot"></span><span id="statusText">Ready to play</span></span>
-        </div>
-        <div class="range-line">
-          <span class="range-chip"><small>LOW</small><span id="low">1</span></span>
-          <span aria-hidden="true" style="color:var(--muted)">→</span>
-          <span class="range-chip"><small>HIGH</small><span id="high">100</span></span>
-        </div>
-        <div class="guess-label" id="guessLabel">Is your number...</div>
-        <div class="guess" id="guess" aria-live="polite">50</div>
-        <p class="message" id="message" aria-live="polite">Pick a number in your head. Keep it secret.</p>
-        <div class="actions">
-          <button class="btn btn-secondary" id="lowerBtn" type="button"><span class="arrow">↙</span> Too high</button>
-          <button class="btn btn-primary" id="correctBtn" type="button">✓ That's it!</button>
-          <button class="btn btn-secondary" id="higherBtn" type="button"><span class="arrow">↗</span> Too low</button>
-        </div>
-        <div class="bottom-row"><span>Guess <strong id="guessCount">1</strong></span><span>Max needed <strong id="maxGuesses">7</strong> guesses</span></div>
-      </article>
-      <aside class="side">
-        <section class="card side-card">
-          <h2>Search stats</h2>
-          <div class="stats">
-            <div class="stat"><strong id="remaining">100</strong><span>Numbers left</span></div>
-            <div class="stat"><strong id="efficiency">0%</strong><span>Range narrowed</span></div>
+
+    <main class="layout" id="gameRoot">
+      <aside class="panel range-panel" aria-label="Range settings">
+        <div class="panel-heading"><h2 class="panel-title">Search parameters</h2><span class="panel-index">01 / SETUP</span></div>
+        <form id="rangeForm">
+          <div class="range-fields">
+            <div class="field"><label class="small-label" for="minInput">Lower boundary</label><input id="minInput" type="number" value="1" step="1" required inputmode="numeric"></div>
+            <div class="field"><label class="small-label" for="maxInput">Upper boundary</label><input id="maxInput" type="number" value="100" step="1" required inputmode="numeric"></div>
           </div>
-          <div class="progress-track" role="progressbar" aria-label="Search progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress"><div class="progress-fill" id="progressFill"></div></div>
-          <p class="small-muted" id="progressText">Every answer cuts the search space roughly in half.</p>
-        </section>
-        <section class="card side-card">
-          <h2>Guess history</h2>
-          <div class="history" id="history"><span class="history-empty">Your guesses will show up here.</span></div>
-        </section>
-        <section class="card side-card">
-          <h2>Make it your game</h2>
-          <p class="small-muted">Choose the number range. Use whole numbers only.</p>
-          <form id="rangeForm">
-            <div class="setup">
-              <div class="field"><label for="minInput">Start at</label><input id="minInput" type="number" value="1" step="1" required></div>
-              <div class="field"><label for="maxInput">End at</label><input id="maxInput" type="number" value="100" step="1" required></div>
-              <div class="wide"><button class="btn btn-primary btn-full" type="submit">↻ Set range & restart</button></div>
-            </div>
-            <div class="presets" aria-label="Range presets">
-              <button class="preset" type="button" data-min="1" data-max="10">1–10</button>
-              <button class="preset" type="button" data-min="1" data-max="100">1–100</button>
-              <button class="preset" type="button" data-min="1" data-max="1000">1–1,000</button>
-              <button class="preset" type="button" data-min="-50" data-max="50">−50–50</button>
-            </div>
-            <p class="notice" id="notice" role="alert"></p>
-          </form>
-        </section>
+          <button class="full-btn" type="submit">↻ &nbsp; INITIALIZE NEW ROUND</button>
+          <p class="notice" id="notice" role="alert"></p>
+        </form>
+        <p class="field-note">Use whole numbers. Both boundaries are included in the search.</p>
+        <div class="separator"></div>
+        <div class="tiny-heading">Quick parameters</div>
+        <div class="presets" aria-label="Range presets">
+          <button class="preset" type="button" data-min="1" data-max="10">01 — 10</button>
+          <button class="preset" type="button" data-min="1" data-max="100">01 — 100</button>
+          <button class="preset" type="button" data-min="1" data-max="1000">01 — 1K</button>
+          <button class="preset" type="button" data-min="-50" data-max="50">± 50</button>
+        </div>
+        <div class="separator"></div>
+        <div class="tiny-heading">Interaction guide</div>
+        <p class="field-note" style="margin-top:0">When the guess is above your number, select <strong style="color:#ffd28a">Too high</strong>. When it is below your number, select <strong style="color:#85e7ff">Too low</strong>. Otherwise, confirm the match.</p>
       </aside>
-    </section>
-  </main>
-  <footer><div class="wrap footer-inner"><span>Built on binary search · O(log n) time</span><span>Keyboard: <span class="kbd">←</span> too high · <span class="kbd">→</span> too low · <span class="kbd">Enter</span> correct</span></div></footer>
+
+      <section class="game-stage" id="stage" aria-label="Holographic guessing engine">
+        <div class="stage-topline">
+          <span class="stage-id">HOLOGRAM CORE / ACTIVE</span>
+          <span class="stage-index">NX-047 · LIVE FEED</span>
+        </div>
+        <div class="stage-actions"><button class="ghost-btn" id="restartBtn" type="button" title="Restart with the current range">⟲ &nbsp; RESET</button></div>
+        <div class="scene">
+          <div class="scene-glow" aria-hidden="true"></div>
+          <div class="floor-disc" aria-hidden="true"></div>
+          <div class="scan-line" aria-hidden="true"></div>
+          <div class="scan-beam" aria-hidden="true"></div>
+          <div class="holo-object" aria-hidden="true">
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="orbit orbit-three"></div>
+            <div class="holo-orb">
+              <div class="orb-meridian"></div><div class="orb-meridian two"></div>
+              <div class="orb-latitude"></div><div class="orb-latitude two"></div>
+            </div>
+            <div class="holo-number">
+              <div class="number-frame">
+                <div class="number-label" id="numberLabel">CURRENT GUESS</div>
+                <div class="number-value" id="guess" aria-live="polite">50</div>
+                <div class="number-caption" id="numberCaption">AWAITING RESPONSE</div>
+              </div>
+            </div>
+          </div>
+          <div class="core-caption" id="coreCaption">SEARCH WINDOW &nbsp; <strong id="rangeText">001 — 100</strong></div>
+        </div>
+        <canvas class="effects-canvas" id="effectsCanvas" aria-hidden="true"></canvas>
+        <div class="flash" aria-hidden="true"></div>
+        <div class="status-message" id="message" role="status" aria-live="polite">Think of your number, then choose a response below.</div>
+        <div class="action-deck">
+          <button class="action-btn" id="lowerBtn" type="button"><span class="symbol">↘</span> TOO HIGH</button>
+          <button class="action-btn primary" id="correctBtn" type="button"><span class="symbol">◇</span> CORRECT</button>
+          <button class="action-btn" id="higherBtn" type="button"><span class="symbol">↗</span> TOO LOW</button>
+        </div>
+        <div class="stage-bottomline"><span>SEARCH STATUS: <strong id="statusText" style="color:#a8c7d8">READY</strong></span><span>GUESS <strong id="guessCount" style="color:#d2ecf8">01</strong></span></div>
+      </section>
+
+      <aside class="panel stats-panel" aria-label="Search statistics and history">
+        <div class="panel-heading"><h2 class="panel-title">Live telemetry</h2><span class="panel-index">02 / DATA</span></div>
+        <div class="metric-list">
+          <div class="metric">
+            <div class="metric-top"><span>Possible numbers</span><span>◌</span></div>
+            <div class="metric-value" id="remaining">100</div>
+            <div class="metric-track"><div class="metric-fill" id="remainingFill"></div></div>
+          </div>
+          <div class="metric">
+            <div class="metric-top"><span>Search reduction</span><span>↘</span></div>
+            <div class="metric-value" id="efficiency">0<small>%</small></div>
+            <div class="metric-track"><div class="metric-fill" id="efficiencyFill"></div></div>
+          </div>
+          <div class="metric">
+            <div class="metric-top"><span>Efficiency estimate</span><span>⌁</span></div>
+            <div class="metric-value"><span id="maxGuesses">7</span><small> max tries</small></div>
+            <div class="range-visual">
+              <div class="range-visual-row"><span>LOW <b id="low">1</b></span><span>HIGH <b id="high">100</b></span></div>
+              <div class="range-bar"><span id="rangeBar"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="history-heading"><div class="tiny-heading" style="margin:0">Signal history</div><span class="history-count" id="historyCount">0 EVENTS</span></div>
+        <div class="history-list" id="history"><span class="history-empty">No responses recorded yet. Your path will appear here.</span></div>
+        <div class="keyboard-hint">KEYBOARD SHORTCUTS<br><kbd>←</kbd> Too high &nbsp; <kbd>→</kbd> Too low<br><kbd>Enter</kbd> Correct guess<br><span style="color:#4e697d">Shortcuts are disabled while editing a range.</span></div>
+      </aside>
+    </main>
+
+    <footer class="footer"><div class="footer-inner"><span><strong>NEXUS ENGINE</strong> &nbsp;·&nbsp; Interactive binary search</span><span>LOCAL EXECUTION · NO ACCOUNT OR DATA COLLECTION</span></div></footer>
+  </div>
+
   <script>
     (() => {
       const $ = (id) => document.getElementById(id);
+      const stage = $('stage');
+      const canvas = $('effectsCanvas');
+      const ctx = canvas.getContext && canvas.getContext('2d');
+      const root = $('gameRoot');
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const els = {
-        low: $('low'), high: $('high'), guess: $('guess'), message: $('message'),
-        guessLabel: $('guessLabel'), count: $('guessCount'), max: $('maxGuesses'),
-        remaining: $('remaining'), efficiency: $('efficiency'), progress: $('progress'),
-        progressFill: $('progressFill'), progressText: $('progressText'), history: $('history'),
-        statusText: $('statusText'), notice: $('notice'), minInput: $('minInput'), maxInput: $('maxInput'),
-        lower: $('lowerBtn'), higher: $('higherBtn'), correct: $('correctBtn')
+        low: $('low'), high: $('high'), guess: $('guess'), numberLabel: $('numberLabel'),
+        numberCaption: $('numberCaption'), message: $('message'), status: $('statusText'),
+        count: $('guessCount'), max: $('maxGuesses'), remaining: $('remaining'),
+        efficiency: $('efficiency'), remainingFill: $('remainingFill'), efficiencyFill: $('efficiencyFill'),
+        rangeBar: $('rangeBar'), rangeText: $('rangeText'), history: $('history'),
+        historyCount: $('historyCount'), notice: $('notice'), minInput: $('minInput'),
+        maxInput: $('maxInput'), lower: $('lowerBtn'), higher: $('higherBtn'), correct: $('correctBtn')
       };
-      let initialLow = 1, initialHigh = 100, low = 1, high = 100, current = 50, guesses = [], finished = false;
-      const midpoint = () => Math.floor((low + high) / 2);
-      const maxGuessesFor = (size) => size <= 1 ? 1 : Math.ceil(Math.log2(size + 1));
-      const format = (n) => n.toLocaleString();
-      const setDisabled = (disabled) => [els.lower, els.higher, els.correct].forEach((b) => b.disabled = disabled);
+      let initialLow = 1, initialHigh = 100, low = 1, high = 100, current = 50;
+      let guesses = [], finished = false, outcome = null, effectTimer = null, numberTimer = null;
+      let particles = [], frame = 0, canvasWidth = 0, canvasHeight = 0;
 
-      function start(min, max) {
-        initialLow = low = min; initialHigh = high = max; guesses = []; finished = false;
-        current = midpoint();
-        els.notice.textContent = '';
-        els.message.textContent = 'Pick a number in your head. Keep it secret.';
-        els.guessLabel.textContent = 'Is your number...';
-        els.statusText.textContent = 'Ready to play';
-        els.guess.classList.remove('celebrate');
-        setDisabled(false);
-        render();
+      const midpoint = () => Math.floor(low + (high - low) / 2);
+      const format = (n) => Number(n).toLocaleString('en-US');
+      const maxGuessesFor = (size) => size <= 1 ? 1 : Math.ceil(Math.log2(size + 1));
+      const setDisabled = (disabled) => [els.lower, els.higher, els.correct].forEach((button) => button.disabled = disabled);
+
+      function resizeCanvas() {
+        if (!ctx) return;
+        const rect = stage.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvasWidth = rect.width; canvasHeight = rect.height;
+        canvas.width = Math.max(1, Math.round(canvasWidth * dpr));
+        canvas.height = Math.max(1, Math.round(canvasHeight * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function renderHistory() {
+        els.history.replaceChildren();
+        els.historyCount.textContent = guesses.length + (guesses.length === 1 ? ' EVENT' : ' EVENTS');
+        if (!guesses.length) {
+          const empty = document.createElement('span');
+          empty.className = 'history-empty';
+          empty.textContent = 'No responses recorded yet. Your path will appear here.';
+          els.history.append(empty);
+          return;
+        }
+        guesses.slice().reverse().forEach((item) => {
+          const pill = document.createElement('span');
+          pill.className = 'history-pill ' + (item.direction === 'correct' ? 'found' : item.direction === 'too-high' ? 'high' : 'low');
+          const dot = document.createElement('i');
+          const text = document.createElement('span');
+          const label = item.direction === 'correct' ? 'FOUND' : item.direction === 'too-high' ? 'HIGH' : 'LOW';
+          text.textContent = format(item.value) + ' · ' + label;
+          pill.append(dot, text);
+          els.history.append(pill);
+        });
       }
 
       function render() {
-        els.low.textContent = format(low); els.high.textContent = format(high);
-        els.guess.textContent = format(current);
-        els.count.textContent = guesses.length + 1;
-        els.max.textContent = maxGuessesFor(initialHigh - initialLow + 1);
-        const remaining = Math.max(0, high - low + 1);
+        const remaining = outcome === 'found' || outcome === 'conflict' ? 0 : Math.max(0, high - low + 1);
         const total = initialHigh - initialLow + 1;
-        const progress = Math.min(100, Math.round((1 - remaining / total) * 100));
+        const progress = outcome === 'found' || outcome === 'conflict' ? 100 : Math.round((1 - remaining / total) * 100);
+        els.low.textContent = format(low);
+        els.high.textContent = format(high);
+        els.guess.textContent = outcome === 'conflict' ? '—' : format(current);
+        els.rangeText.textContent = format(low).padStart(3, '0') + ' — ' + format(high).padStart(3, '0');
+        els.count.textContent = String(finished ? guesses.length : guesses.length + 1).padStart(2, '0');
+        els.max.textContent = maxGuessesFor(total);
         els.remaining.textContent = format(remaining);
-        els.efficiency.textContent = progress + '%';
-        els.progressFill.style.width = progress + '%';
-        els.progress.setAttribute('aria-valuenow', String(progress));
-        els.progressText.textContent = remaining === 1 ? 'One possible number remains.' : 'Every answer cuts the search space roughly in half.';
-        els.history.innerHTML = '';
-        if (!guesses.length) {
-          const empty = document.createElement('span'); empty.className = 'history-empty'; empty.textContent = 'Your guesses will show up here.'; els.history.append(empty);
-        } else {
-          guesses.slice().reverse().forEach((item) => {
-            const pill = document.createElement('span'); pill.className = 'history-pill';
-            pill.textContent = format(item.value) + ' · ' + item.direction; els.history.append(pill);
+        els.efficiency.innerHTML = progress + '<small>%</small>';
+        els.remainingFill.style.width = Math.max(0, remaining / total * 100) + '%';
+        els.efficiencyFill.style.width = progress + '%';
+        els.rangeBar.style.transform = 'scaleX(' + Math.max(0, remaining / total) + ')';
+        renderHistory();
+      }
+
+      function stopParticles() {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        particles = [];
+        if (ctx) ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      }
+
+      function launchParticles(kind) {
+        if (!ctx || reduceMotion) return;
+        resizeCanvas();
+        stopParticles();
+        const colors = kind === 'success' ? ['#a5ffcc','#85e7ff','#d9f8ff','#83baff','#ffffff']
+          : kind === 'error' ? ['#ff809b','#ffb1bd','#ffd5dd']
+          : kind === 'high' ? ['#ffd28a','#fff0c7','#f7aa66']
+          : ['#85e7ff','#b2f4ff','#83baff'];
+        const count = kind === 'success' ? 100 : kind === 'error' ? 24 : 36;
+        const cx = canvasWidth / 2, cy = canvasHeight * .43;
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = kind === 'success' ? 1.4 + Math.random() * 4.2 : .7 + Math.random() * 2.3;
+          particles.push({
+            x: cx + (Math.random() - .5) * 30, y: cy + (Math.random() - .5) * 30,
+            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - (kind === 'success' ? 1.2 : .1),
+            size: kind === 'success' ? 1.5 + Math.random() * 3.5 : 1 + Math.random() * 2,
+            life: 1, decay: .009 + Math.random() * .019,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            angle: Math.random() * 6, spin: (Math.random() - .5) * .14,
+            shape: kind === 'success' && Math.random() > .35 ? 'rect' : 'dot'
           });
         }
+        const draw = () => {
+          if (!ctx) return;
+          ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+          particles = particles.filter((p) => p.life > 0);
+          particles.forEach((p) => {
+            p.x += p.vx; p.y += p.vy; p.vy += .025; p.vx *= .994;
+            p.life -= p.decay; p.angle += p.spin;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.life);
+            ctx.fillStyle = p.color;
+            ctx.translate(p.x, p.y); ctx.rotate(p.angle);
+            if (p.shape === 'rect') ctx.fillRect(-p.size, -p.size * .55, p.size * 2.1, p.size * 1.1);
+            else { ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI * 2); ctx.fill(); }
+            ctx.restore();
+          });
+          if (particles.length) frame = requestAnimationFrame(draw);
+          else { frame = 0; ctx.clearRect(0, 0, canvasWidth, canvasHeight); }
+        };
+        frame = requestAnimationFrame(draw);
+      }
+
+      function setEffect(kind) {
+        ['event-high', 'event-low', 'event-success', 'event-error'].forEach((name) => stage.classList.remove(name));
+        void stage.offsetWidth;
+        stage.classList.add('event-' + kind);
+        if (effectTimer) clearTimeout(effectTimer);
+        effectTimer = window.setTimeout(() => {
+          stage.classList.remove('event-' + kind);
+          effectTimer = null;
+        }, kind === 'success' ? 1500 : 950);
+        launchParticles(kind);
+      }
+
+      function animateNumber() {
+        stage.classList.remove('number-changing');
+        void els.guess.offsetWidth;
+        stage.classList.add('number-changing');
+        if (numberTimer) clearTimeout(numberTimer);
+        numberTimer = window.setTimeout(() => stage.classList.remove('number-changing'), 420);
+      }
+
+      function start(min = initialLow, max = initialHigh) {
+        initialLow = low = min; initialHigh = high = max;
+        guesses = []; current = midpoint(); finished = false; outcome = null;
+        els.notice.textContent = '';
+        els.numberLabel.textContent = 'CURRENT GUESS';
+        els.numberCaption.textContent = 'AWAITING RESPONSE';
+        els.message.className = 'status-message';
+        els.message.innerHTML = 'Think of your number, then choose a response below.';
+        els.status.textContent = 'READY';
+        stage.classList.remove('event-high', 'event-low', 'event-success', 'event-error');
+        if (effectTimer) { clearTimeout(effectTimer); effectTimer = null; }
+        if (numberTimer) { clearTimeout(numberTimer); numberTimer = null; }
+        stopParticles();
+        setDisabled(false);
+        render();
+        animateNumber();
       }
 
       function answer(direction) {
         if (finished) return;
         guesses.push({ value: current, direction });
         if (direction === 'correct') {
-          finished = true; setDisabled(true);
-          els.statusText.textContent = 'Number found';
-          els.guessLabel.textContent = 'You were thinking of';
-          els.message.textContent = 'Got it in ' + guesses.length + (guesses.length === 1 ? ' guess' : ' guesses') + '. Binary search for the win!';
-          els.guess.classList.remove('celebrate'); void els.guess.offsetWidth; els.guess.classList.add('celebrate');
-          els.history.lastChild?.remove();
-          const pill = document.createElement('span'); pill.className = 'history-pill'; pill.textContent = format(current) + ' · correct'; els.history.prepend(pill);
+          finished = true; outcome = 'found';
+          setDisabled(true);
+          els.numberLabel.textContent = 'TARGET ACQUIRED';
+          els.numberCaption.textContent = 'MATCH CONFIRMED';
+          els.status.textContent = 'LOCKED';
+          els.message.className = 'status-message success';
+          els.message.innerHTML = '<strong>Target acquired.</strong> Found in ' + guesses.length + (guesses.length === 1 ? ' guess.' : ' guesses.') + ' — search complete.';
+          render();
+          setEffect('success');
           return;
         }
-        if (direction === 'higher') low = current + 1;
+
+        if (direction === 'too-low') low = current + 1;
         else high = current - 1;
+
         if (low > high) {
-          finished = true; setDisabled(true); els.statusText.textContent = 'Range mismatch';
-          els.guessLabel.textContent = 'Something does not add up';
-          els.message.textContent = 'Those answers conflict. Restart the game and check each response.';
-          els.guess.textContent = '—'; renderHistoryOnly(); return;
+          finished = true; outcome = 'conflict';
+          setDisabled(true);
+          els.numberLabel.textContent = 'SIGNAL CONFLICT';
+          els.numberCaption.textContent = 'RANGE INCONSISTENCY';
+          els.status.textContent = 'CHECK INPUT';
+          els.message.className = 'status-message error';
+          els.message.innerHTML = '<strong>Search conflict detected.</strong> Those answers cannot all be true. Reset the round and try again.';
+          render();
+          setEffect('error');
+          return;
         }
+
         current = midpoint();
-        els.statusText.textContent = 'Searching…';
-        els.message.textContent = direction === 'higher' ? 'Going higher. The lower half is ruled out.' : 'Going lower. The upper half is ruled out.';
+        const kind = direction === 'too-high' ? 'high' : 'low';
+        els.numberLabel.textContent = direction === 'too-high' ? 'RANGE MOVING DOWN' : 'RANGE MOVING UP';
+        els.numberCaption.textContent = direction === 'too-high' ? 'UPPER BOUND REDUCED' : 'LOWER BOUND INCREASED';
+        els.status.textContent = direction === 'too-high' ? 'RECALIBRATING ↓' : 'RECALIBRATING ↑';
+        els.message.className = 'status-message';
+        els.message.innerHTML = direction === 'too-high'
+          ? 'Upper bound reduced. <strong>Scanning lower values.</strong>'
+          : 'Lower bound increased. <strong>Scanning higher values.</strong>';
         render();
+        animateNumber();
+        setEffect(kind);
       }
 
-      function renderHistoryOnly() {
-        els.history.innerHTML = '';
-        guesses.slice().reverse().forEach((item) => {
-          const pill = document.createElement('span'); pill.className = 'history-pill'; pill.textContent = format(item.value) + ' · ' + item.direction; els.history.append(pill);
-        });
-      }
-
-      els.lower.addEventListener('click', () => answer('lower'));
-      els.higher.addEventListener('click', () => answer('higher'));
-      els.correct.addEventListener('click', () => answer('correct'));
       $('rangeForm').addEventListener('submit', (event) => {
         event.preventDefault();
         const min = Number(els.minInput.value), max = Number(els.maxInput.value);
-        if (!Number.isSafeInteger(min) || !Number.isSafeInteger(max)) { els.notice.textContent = 'Please enter whole numbers within the safe integer range.'; return; }
-        if (min >= max) { els.notice.textContent = 'The end number must be greater than the start number.'; return; }
-        if (max - min > 1000000000000) { els.notice.textContent = 'Please choose a smaller range (difference up to 1,000,000,000,000).'; return; }
+        if (!Number.isSafeInteger(min) || !Number.isSafeInteger(max)) {
+          els.notice.textContent = 'Enter whole numbers within JavaScript’s safe integer range.'; return;
+        }
+        if (min >= max) { els.notice.textContent = 'Upper boundary must be greater than lower boundary.'; return; }
+        if (max - min > 1000000000000) { els.notice.textContent = 'Choose a smaller range (maximum difference: 1 trillion).'; return; }
         start(min, max);
       });
+
       document.querySelectorAll('[data-min]').forEach((button) => button.addEventListener('click', () => {
-        els.minInput.value = button.dataset.min; els.maxInput.value = button.dataset.max;
+        els.minInput.value = button.dataset.min;
+        els.maxInput.value = button.dataset.max;
         $('rangeForm').requestSubmit();
       }));
+      $('restartBtn').addEventListener('click', () => start(initialLow, initialHigh));
+      els.lower.addEventListener('click', () => answer('too-high'));
+      els.higher.addEventListener('click', () => answer('too-low'));
+      els.correct.addEventListener('click', () => answer('correct'));
+
       document.addEventListener('keydown', (event) => {
-        if (event.altKey || event.ctrlKey || event.metaKey || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
-        if (event.key === 'ArrowLeft') { event.preventDefault(); answer('lower'); }
-        if (event.key === 'ArrowRight') { event.preventDefault(); answer('higher'); }
-        if (event.key === 'Enter' && !finished) answer('correct');
+        if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select')) return;
+        if (event.key === 'Enter' && event.target.closest('button')) return;
+        if (event.key === 'ArrowLeft') { event.preventDefault(); answer('too-high'); }
+        else if (event.key === 'ArrowRight') { event.preventDefault(); answer('too-low'); }
+        else if (event.key === 'Enter' && !finished) { event.preventDefault(); answer('correct'); }
       });
+
+      window.addEventListener('resize', resizeCanvas, { passive: true });
+      if ('ResizeObserver' in window) new ResizeObserver(resizeCanvas).observe(stage);
+      resizeCanvas();
       start(1, 100);
     })();
   </script>
