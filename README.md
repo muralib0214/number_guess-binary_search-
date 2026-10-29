@@ -1,289 +1,79 @@
-# 🎯 Number Guessing Game — Binary Search (Python)
+# 🎯 Mindguess — Number Guessing Game
 
-### 🚀 An Intelligent Number Guessing Game using Binary Search Algorithm
+A beginner-friendly number guessing project powered by **binary search**. The computer can guess the number you're thinking of through the original Python terminal game, or you can play with the new polished, responsive browser interface.
 
-## 📌 Project-Overview
+## ✨ Browser UI
 
-This project is a Python-based Number Guessing Game where:
+The web version includes:
+- 🌙 Classy dark interface with lime and violet accents
+- 📱 Responsive layout for desktop, tablet, and mobile
+- 🎮 Interactive **Too high**, **Too low**, and **That's it!** controls
+- 🎚️ Custom ranges and one-click presets (1–10, 1–100, 1–1,000, and −50–50)
+- 📊 Search progress, numbers remaining, guess count, and guess history
+- ⌨️ Keyboard shortcuts: **←** = too high, **→** = too low, **Enter** = correct
+- ♿ Focus-visible controls, accessible live feedback, and reduced-motion support
+- 🚫 Input validation and clear recovery when answers conflict
 
-1.User thinks of a number
+The browser game is implemented in plain HTML, CSS, and JavaScript. No frameworks, package installation, server, or external libraries are required.
 
-2.Computer guesses intelligently
+## 🚀 Run the browser game
 
-3. Uses Binary Search Algorithm
+1. Download or clone this repository.
+2. Open `index.html` in any modern browser.
+3. Think of a number in the selected range and respond to the computer's guesses.
 
-4.Reduces search range by half every step
+You can also use VS Code's Live Server extension if you prefer a local development server.
 
-6. Ensures fast and efficient guessing
+## 🐍 Run the original Python game
 
-## 🎯Project-Objective
+Requires Python 3.x and no external libraries.
 
-### The main goal of this project:
-
-✅ Implement Binary Search Algorithm
-
-✅ Practice Recursion
-
-✅ Improve Problem Solving Skills
-
-✅ Build Beginner-Friendly Python Project
-
-✅ Learn Efficient Searching Algorithm
-
-## ✨Features
-🔍 Binary Search Based Guessing
-
-⚡ Fast and Efficient Algorithm
-
-💻 Command Line Interactive Game
-
-🔁 Recursive Implementation
-
-🛡️ Invalid Input Handling
-
-📈 Optimized Performance
-
-🎯 Beginner Friendly Code
-
-## How-It-Works
-### Step-by-Step Execution
-
-Step 1 → User enters Start Range
-
-Step 2 → User enters End Range
-
-Step 3 → User thinks of a number
-
-Step 4 → Program guesses middle number
-
-Step 5 → User answers:
-
-Y → Correct Guess
-
-N → Wrong Guess
-
-Step 6 → Program asks:
-
-Is number greater than mid?
-
-Step 7 → Search range reduces
-
-Step 8 → Repeat until guessed
-
-## Example-Execution
-
-Number Guessing Game in Python
-
-Enter Start Range: 1
-
-Enter End Range: 100
-
-
-Think of a number between 1 and 100.
-
-Is the number 50? (Y/N): N
-
-Is the number greater than 50? (Y/N): Y
-
-
-Is the number 75? (Y/N): N
-
-Is the number greater than 75? (Y/N): N
-
-
-Is the number 62? (Y/N): Y
-
-Congratulation Geek! Successfully Guessed Number.
-
-## ⚡Algorithm-Used:
-
-### 🔎 Binary Search Algorithm.
-
-####Algorithm Steps:
-
-1.Find middle element
-
-2.Compare with target
-
-3.Reduce search space
-
-4.Repeat until found
-
-## ⏱️Time-Complexity:
-
-O(log n)
-
-### Efficiency Example:
-#### Range	Maximum Guesses
-1 — 100	[7 guesses]
-
-1 — 1,000	[10 guesses]
-
-1 — 1,000,000	[20 guesses]
-
-## 📂 Project-Structure
-### number-guessing-game/
-
-│
-
-├── guess_number.py
-
-└── README.md
-
-## Requirements:
-### Required Software
-
-Python 3.x
-
-Terminal / Command Prompt
-
-No External Libraries Required
-
-## ▶️How-To-Run
-Step 1 — Clone Repository
-
+```bash
 git clone https://github.com/muralib0214/number_guess-binary_search-.git
+cd number_guess-binary_search-
+python number_guess.py
+```
 
-Step 2 — Navigate to Project Folder
+The terminal version asks you to choose a start and end range, then answers whether each computer guess matches your number and whether your number is higher or lower.
 
-cd number-guessing-game
+## 🧠 How binary search works
 
-Step 3 — Run Python File
+1. Find the middle of the current range.
+2. Ask whether the target number is the guess, higher, or lower.
+3. Discard the half that cannot contain the target.
+4. Repeat until the number is found.
 
-python guess_number.py
+Each answer cuts the search range roughly in half, so the algorithm runs in **O(log n)** time.
 
-## 💻 Source-Code
-### Python implementation for the 
-### number guessing using 
-### Binary Search
+| Range size | Maximum guesses (approximately) |
+| ---: | ---: |
+| 100 | 7 |
+| 1,000 | 10 |
+| 1,000,000 | 20 |
 
-def guessNumber(startRange, endRange):
-    if startRange > endRange:
-        return True
+## 📂 Project structure
 
-    mid = (startRange + endRange) // 2
+```text
+number_guess-binary_search-/
+├── index.html       # Interactive browser UI (HTML, CSS, JavaScript)
+├── number_guess.py  # Original Python terminal game
+└── README.md        # Project documentation
+```
 
-    print(f"Is the number {mid}? (Y/N): ", end="")
-    user = input().strip()
+## 🛠️ Tech stack
 
-    if user in ("Y", "y"):
-        print("Congratulation Geek! Successfully Guessed Number.")
-        return False
+- **Python 3** — original command-line implementation
+- **HTML5, CSS3, JavaScript** — browser UI
+- **Binary search** — core search strategy
 
-    elif user in ("N", "n"):
-        print(f"Is the actual number greater than {mid}? (Y/N): ", end="")
-        user = input().strip()
+## 🔮 Possible next steps
 
-        if user in ("Y", "y"):
-            return guessNumber(mid + 1, endRange)
-        elif user in ("N", "n"):
-            return guessNumber(startRange, mid - 1)
-        else:
-            print("Invalid input.")
-            return guessNumber(startRange, endRange)
-    else:
-        print("Invalid input.")
-        return guessNumber(startRange, endRange)
+- Add sound and optional visual effects
+- Save personal bests and play statistics locally
+- Add more game modes and accessibility preferences
 
+## 👨‍💻 Author
 
-if __name__ == "__main__":
-    print("Number Guessing Game in Python")
+Murali — learning data structures, algorithms, and Python.
 
-    startRange = int(input("Enter Start Range: "))
-    endRange = int(input("Enter End Range: "))
-
-    print(f"Think of a number between {startRange} and {endRange}")
-
-    out = guessNumber(startRange, endRange)
-
-    if out:
-        print("Couldn't guess it.")
-
-    print("Thank you for playing")
-
-## 📚 Learning-Concepts
-
-### This project helps you learn:
-
-🧠 Binary Search Algorithm
-
-🔁 Recursion
-
-💻 Python Functions
-
-🔀 Conditional Statements
-
-📥 User Input Handling
-
-⚡ Algorithm Optimization
-
-## 🎯 Use-Cases
-Python Beginner Project
-
-Data Structures Practice
-
-Coding Interview Preparation
-
-Algorithm Learning
-
-Academic Mini Project
-
-## 🔮Future-Improvements
-
-### Possible upgrades:
-
-🎨 GUI Interface
-
-🎮 Difficulty Levels
-
-📊 Score System
-
-🏆 Leaderboard
-
-👥 Multiplayer Mode
-
-🌐 Web Application Version
-
-# Project-Difficulty:
-
-Difficulty Level
-
-🟢 Beginner → 🟡 Intermediate
-
-Perfect For:
-
-Students
-
-Python Beginners
-
-DSA Learners
-
-## 🤝Contributing
-
-Steps to contribute:
-
-Fork repository
-
-Create new branch\
-
-Add improvements
-
-Submit pull request
-
-## ⭐Support
-
-If you like this project:
-
-⭐ Star the repository
-
-🍴 Fork the project
-
-📢 Share with others
-
-# 👨‍💻 Author
-
-Murali
-
-Learning Data Structures & Algorithms 🚀
-
-
+Contributions and suggestions are welcome.
